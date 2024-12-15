@@ -40,7 +40,10 @@ load_all("../HW3")
 # to load your package
 # my package is called hw3
 # load_all("../hw3")
+est<-read_csv("../data/est.csv")
+dat<-read_csv("../data/contraceptive_use.csv")
 ```
+
 
 
 # HW3 exercises

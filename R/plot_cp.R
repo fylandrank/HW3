@@ -11,15 +11,35 @@
 #' @return ggplot graph that displays selected observations for a chosen country
 #' @export
 #'
-#' @examples
-#' (dat, est, 4, CI = "95")
+#'
+
+# -------------------------------------------------------------------------
+
 
 plot_cp <- function(dat, est, iso_code, CI = "95") {
-  dat <- cp_use %>%
-    select(division_numeric_code, contraceptive_use_modern, is_in_union, start_date , end_date) %>%
-    rename(iso = division_numeric_code, obs_mCPR = contraceptive_use_modern, mar_status = is_in_union) %>%
-    mutate(year = (start_date + end_date)/2, cp = (obs_mCPR*100)) %>%
-    filter(mar_status == "Y")
+
+  if (!("iso" %in% colnames(dat)) | !("iso" %in% colnames(est))) {
+    stop("iso_code is not found in 'dat' or 'est'")
+  }
+  if (!("iso" %in% colnames(dat))) {
+    stop("Input `dat` does NOT contain variable iso")
+  }
+  if (!("year" %in% colnames(dat))) {
+    stop("Input `dat` does NOT contain variable year")
+  }
+  if (!("cp" %in% colnames(dat))) {
+    stop("Input `dat` does NOT contain variable cp")
+  }
+  if(!(is.numeric(dat$cp))) {
+    stop("cp is not numeric")
+  }
+
+  if (is.na(CI)) {
+    CI <- "none"
+  }
+  if (!(CI %in% c(80, 95, NA))) {
+    stop("CI is not one of 80, 95, or NA")
+  }
 
   est2 <- est %>%
     filter(iso == iso_code)
@@ -28,9 +48,7 @@ plot_cp <- function(dat, est, iso_code, CI = "95") {
     filter(iso == iso_code)
   est2 <- est %>%
     filter(iso == iso_code)
-  if (is.na(CI)) {
-    CI <- "none"
-  }
+
   combo_plot <- ggplot(est2, aes(x = Year, y = Median)) +
     geom_line()
   if (CI == "95") {
@@ -50,4 +68,5 @@ plot_cp <- function(dat, est, iso_code, CI = "95") {
     labs(x = "Time", y = "Modern use (%)", title = est2$`Country or area`[1])
   return(combo_plot)
 }
+
 

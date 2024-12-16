@@ -41,7 +41,7 @@ load_all("../HW3")
 # my package is called hw3
 # load_all("../hw3")
 est<-read_csv("../data/est.csv")
-dat<-read_csv("../data/contraceptive_use.csv")
+cp_use<-read_csv("../data/contraceptive_use.csv")
 ```
 
 
@@ -57,13 +57,21 @@ As a reminder, the data set csv file contraceptive_use.csv (which should be put 
 - is_in_union == "Y" refers to observations among married women. 
 - (start_date + end_date)/2 is the reference time for the observation. 
 
+```{r}
+dat <- cp_use %>%
+    select(division_numeric_code, contraceptive_use_modern, is_in_union, start_date , end_date) %>%
+    rename(iso = division_numeric_code, obs_mCPR = contraceptive_use_modern, mar_status = is_in_union) %>%
+    mutate(year = (start_date + end_date)/2, cp = (obs_mCPR*100)) %>%
+    filter(mar_status == "Y")
+```
+
 
 ## Exercise 1: write a new function `get_width_ci()` to calculate the width of the uncertainty intervals
 
 Write a function `get_width_ci` that calculates the widths of the uncertainty intervals for a country, based on 95 or 80% bounds. The function output should be a data frame, where the first column is the year, and the second column is the corresponding interval width.
 
 Similar to HW2, in this HW3, you should not define the `get_width_ci()` in this Rmd. Instead, you should define it in `R/get_width_ci.R` file and load it by `load_all()` function call before.
-
+    
 You should be able to replicate the following results:
 
 ```{r, include= T}
@@ -81,7 +89,7 @@ Extend the function `plot_cp` such that it produces an informative error message
 
 Write code (function calls) in your notebook to print the error message (set chunk options as in starter code Rmd to make sure that you can still knit the rmd). See examples below.
 
-### Input `dat` does NOT contain variable iso, year and/or cp
+### Input `dat` does NOT contain variable iso, year and/or contraceptive_use_modern
 ```{r, error= TRUE, include = T}
 plot_cp(dat %>% select(-iso), est, iso_code = 4)
 plot_cp(dat %>% select(-year), est, iso_code = 4)

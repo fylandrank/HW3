@@ -26,4 +26,3 @@ get_width_ci <- function(est, iso_code, coverage) {
   )
   print(ci_width_tibble)
 }
-

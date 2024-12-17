@@ -1711,7 +1711,7 @@ est&lt;-read_csv(&quot;../data/est.csv&quot;)</code></pre>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>dat&lt;-read_csv(&quot;../data/contraceptive_use.csv&quot;)</code></pre>
+<pre class="r"><code>cp_use&lt;-read_csv(&quot;../data/contraceptive_use.csv&quot;)</code></pre>
 <pre><code>## Rows: 1793 Columns: 31
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -1740,6 +1740,11 @@ contains observed mCPR values. Relevant variable info is as follows:</p>
 <li>(start_date + end_date)/2 is the reference time for the
 observation.</li>
 </ul>
+<pre class="r"><code>dat &lt;- cp_use %&gt;%
+    select(division_numeric_code, contraceptive_use_modern, is_in_union, start_date , end_date) %&gt;%
+    rename(iso = division_numeric_code, obs_mCPR = contraceptive_use_modern, mar_status = is_in_union) %&gt;%
+    mutate(year = (start_date + end_date)/2, cp = (obs_mCPR*100)) %&gt;%
+    filter(mar_status == &quot;Y&quot;)</code></pre>
 <div id="exercise-1-write-a-new-function-get_width_ci-to-calculate-the-width-of-the-uncertainty-intervals" class="section level2">
 <h2>Exercise 1: write a new function <code>get_width_ci()</code> to
 calculate the width of the uncertainty intervals</h2>
@@ -1801,38 +1806,30 @@ can still knit the rmd). See examples below.</p>
 <h3>Input <code>dat</code> does NOT contain variable iso, year and/or
 contraceptive_use_modern</h3>
 <pre class="r"><code>plot_cp(dat %&gt;% select(-iso), est, iso_code = 4)</code></pre>
-<pre><code>## Error in `select()`:
-## ! Can&#39;t select columns that don&#39;t exist.
-## ✖ Column `iso` doesn&#39;t exist.</code></pre>
+<pre><code>## Error in plot_cp(dat %&gt;% select(-iso), est, iso_code = 4): iso_code is not found in &#39;dat&#39; or &#39;est&#39;</code></pre>
 <pre class="r"><code>plot_cp(dat %&gt;% select(-year), est, iso_code = 4)</code></pre>
-<pre><code>## Error in `select()`:
-## ! Can&#39;t select columns that don&#39;t exist.
-## ✖ Column `year` doesn&#39;t exist.</code></pre>
+<pre><code>## Error in plot_cp(dat %&gt;% select(-year), est, iso_code = 4): Input `dat` does NOT contain variable year</code></pre>
 <pre class="r"><code>plot_cp(dat %&gt;% select(-cp), est, iso_code = 4)</code></pre>
-<pre><code>## Error in `select()`:
-## ! Can&#39;t select columns that don&#39;t exist.
-## ✖ Column `cp` doesn&#39;t exist.</code></pre>
+<pre><code>## Error in plot_cp(dat %&gt;% select(-cp), est, iso_code = 4): Input `dat` does NOT contain variable cp</code></pre>
 </div>
 <div id="iso_code-is-not-found-in-dat-or-est" class="section level3">
 <h3>iso_code is not found in “dat” or “est”</h3>
 <pre class="r"><code>plot_cp(dat %&gt;% select(-iso), est, iso_code = 4)</code></pre>
-<pre><code>## Error in `select()`:
-## ! Can&#39;t select columns that don&#39;t exist.
-## ✖ Column `iso` doesn&#39;t exist.</code></pre>
+<pre><code>## Error in plot_cp(dat %&gt;% select(-iso), est, iso_code = 4): iso_code is not found in &#39;dat&#39; or &#39;est&#39;</code></pre>
 <pre class="r"><code>plot_cp(dat, est %&gt;% select(-iso), iso_code = 4)</code></pre>
-<pre><code>## Error in plot_cp(dat, est %&gt;% select(-iso), iso_code = 4): Input `dat` does NOT contain variable iso, year and/or contraceptive_use_modern</code></pre>
+<pre><code>## Error in plot_cp(dat, est %&gt;% select(-iso), iso_code = 4): iso_code is not found in &#39;dat&#39; or &#39;est&#39;</code></pre>
 </div>
 <div id="cp-is-not-numeric" class="section level3">
 <h3>cp is not numeric</h3>
 <pre class="r"><code>dat_bug &lt;- dat %&gt;%
   mutate(cp = FALSE)
 plot_cp(dat_bug, est, iso_code = 4)</code></pre>
-<pre><code>## Error in plot_cp(dat_bug, est, iso_code = 4): Input `dat` does NOT contain variable iso, year and/or contraceptive_use_modern</code></pre>
+<pre><code>## Error in plot_cp(dat_bug, est, iso_code = 4): cp is not numeric</code></pre>
 </div>
 <div id="ci-is-not-one-of-80-95-or-na" class="section level3">
 <h3>CI is not one of 80, 95, or NA</h3>
 <pre class="r"><code>plot_cp(dat, est, iso_code = 4, CI = 99)</code></pre>
-<pre><code>## Error in plot_cp(dat, est, iso_code = 4, CI = 99): Input `dat` does NOT contain variable iso, year and/or contraceptive_use_modern</code></pre>
+<pre><code>## Error in plot_cp(dat, est, iso_code = 4, CI = 99): CI is not one of 80, 95, or NA</code></pre>
 </div>
 </div>
 <div id="exercise-3-github" class="section level2">
